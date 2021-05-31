@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, ChatActivity::class.java)
+            val intent = Intent(this, Home::class.java)
             startActivity(intent)
         }, 1000)
     }
