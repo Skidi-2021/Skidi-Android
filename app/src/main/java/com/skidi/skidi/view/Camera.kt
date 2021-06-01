@@ -1,6 +1,7 @@
 package com.skidi.skidi.view
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -74,9 +75,13 @@ class Camera : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
-                    val msg = "Photo capture succeeded: $savedUri"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+
+                    val intentUpload = Intent(this@Camera, Image::class.java)
+                    intentUpload.putExtra(Image.EXTRA_IMAGE_URL, savedUri.toString())
+                    startActivity(intentUpload)
+//                    val msg = "Photo capture succeeded: $savedUri"
+//                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                    Log.d(TAG, msg)
                 }
             })
     }
