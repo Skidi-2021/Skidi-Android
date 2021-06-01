@@ -20,7 +20,10 @@ class ChatActivity : AppCompatActivity() {
         adapter = ChatAdapter(this)
         adapter.notifyDataSetChanged()
 
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[GenerateDummyViewModel::class.java]
+        val viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        )[GenerateDummyViewModel::class.java]
 
         val message = viewModel.getDummyChat()
 
@@ -49,10 +52,10 @@ class ChatActivity : AppCompatActivity() {
 //                        "12.56"
 //                )
 
-                runOnUiThread {
-                    adapter.setMessage(message)
-                    rvChat.scrollToPosition(adapter.itemCount - 1)
-                }
+            runOnUiThread {
+                adapter.setMessage(message)
+                rvChat.scrollToPosition(adapter.itemCount - 1)
+            }
 //            }
 
 //            adapter.setMessage(message)
