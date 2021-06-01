@@ -3,18 +3,25 @@ package com.skidi.skidi.view
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.skidi.skidi.databinding.ActivityImageBinding
 import com.skidi.skidi.ml.Model
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 
 
 class Image : AppCompatActivity() {
@@ -27,6 +34,7 @@ class Image : AppCompatActivity() {
         const val EXTRA_IMAGE_URL = "extra_image_url"
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,18 +64,35 @@ class Image : AppCompatActivity() {
 //        Log.d("sdfsdf", bitmap)
 
         activityImageBinding.btnUpload.setOnClickListener {
+            var tensorImage = TensorImage(DataType.UINT8)
+            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 160, 160, 3), DataType.FLOAT32)
             try {
-                val bitmap = MediaStore.Images.Media.getBitmap(
-                    applicationContext.getContentResolver(),
-                    Uri.parse(savedUri)
-                )
-                val newBitmap = Bitmap.createScaledBitmap(bitmap, 160, 160, false)
+                val source = ImageDecoder.createSource(this.contentResolver, Uri.parse(savedUri))
+                var bitmap = ImageDecoder.decodeBitmap(source)
+                bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-                val tfImage = TensorImage.fromBitmap(newBitmap)
-                val output = skidiModel.process(tfImage.tensorBuffer)
-                Log.d("modelOutput", output.toString())
+                val imageProcessor = ImageProcessor.Builder()
+                    .add(ResizeOp(160, 160, ResizeOp.ResizeMethod.BILINEAR))
+                    .build()
+                var tensorImage = TensorImage(DataType.UINT8)
+                tensorImage.load(bitmap)
+
+                tensorImage = imageProcessor.process(tensorImage)
+                inputFeature0.loadBuffer(tensorImage.buffer)
+
+// Runs model inference and gets result.
+                val outputs = skidiModel.process(inputFeature0)
+                val outputFeature0 = outputs.outputFeature0AsTensorBuffer
+
+//                val output = skidiModel.process(tensorImage.tensorBuffer)
+
+//                val tfImage = TensorImage.fromBitmap(newBitmap)
+//                val output = skidiModel.process(tfImage.tensorBuffer)
+                Log.d("modelOutput", outputFeature0.toString())
             } catch (e: Exception) {
-                Log.d("modelOutput", e.message.toString())
+                Log.e("modelOutput", e.toString())
+                Log.e("modelB", tensorImage.buffer.toString())
+                Log.e("modelBI", inputFeature0.buffer.toString())
             }
         }
         Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()

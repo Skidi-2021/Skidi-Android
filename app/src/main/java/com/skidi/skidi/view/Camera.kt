@@ -84,6 +84,7 @@ class Camera : AppCompatActivity() {
 //                    Log.d(TAG, msg)
                 }
             })
+
     }
 
     private fun startCamera() {
