@@ -22,21 +22,6 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
 
     open class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         open fun bind(message: ChatEntity) {}
-//        val userBinding: UserMessageBinding = UserMessageBinding.bind(view)
-//        val botBinding: BotMessageBinding = BotMessageBinding.bind(view)
-//        fun bind(message: ChatEntity) {
-//            if (message.sender == "bot") {
-//                botBinding.apply {
-//                    tvBotMessage.text = message.message
-//                    tvTime.text = message.time
-//                }
-//            } else {
-//                userBinding.apply {
-//                    tvUserMessage.text = message.message
-//                    tvTime.text = message.time
-//                }
-//            }
-//        }
     }
 
     fun setMessage(message: List<ChatEntity>) {
@@ -73,7 +58,6 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
         } else {
             VIEW_TYPE_USER_MESSAGE
         }
-//        return super.getItemViewType(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
