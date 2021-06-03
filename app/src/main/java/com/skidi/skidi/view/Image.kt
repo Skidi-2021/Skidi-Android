@@ -1,7 +1,13 @@
 package com.skidi.skidi.view
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,7 +17,10 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.google.android.gms.location.*
 import com.skidi.skidi.databinding.ActivityImageBinding
 import com.skidi.skidi.ml.Model
 import org.tensorflow.lite.DataType
@@ -19,21 +28,29 @@ import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import pub.devrel.easypermissions.EasyPermissions
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.util.concurrent.TimeUnit
 
 
-class Image : AppCompatActivity() {
+class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private lateinit var activityImageBinding: ActivityImageBinding
     private lateinit var bitmapBuffer: Bitmap
     private lateinit var rotationMatrix: Matrix
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var longitude = 0.0
+    private var latitude = 0.0
+
 
     companion object {
         const val EXTRA_IMAGE_URL = "extra_image_url"
+        const val PERMISSION_LOCATION_REQUEST_CODE = 1
     }
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +60,22 @@ class Image : AppCompatActivity() {
 
         val skidiModel = Model.newInstance(applicationContext)
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        if(hasLocationPermission()){
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                longitude = it.longitude
+                latitude = it.latitude
+                Log.d("location", "$longitude $latitude")
+            }
+            fusedLocationProviderClient.lastLocation.addOnFailureListener {
+                Log.e("location", it.toString())
+            }
+        } else{
+            requestLocationPermission()
+        }
+
         val fileName = "label.txt"
-        val inputString = application.assets.open(fileName).bufferedReader().use{it.readText()}
+        val inputString = application.assets.open(fileName).bufferedReader().use { it.readText() }
         val label = inputString.split("\n")
 
         val savedUri = intent.getStringExtra(EXTRA_IMAGE_URL)
@@ -95,7 +126,7 @@ class Image : AppCompatActivity() {
 //                val output = skidiModel.process(tfImage.tensorBuffer)
                 Log.d("modelOutput", "index: " + max.toString())
                 Log.d("modelOutput", outputFeature0.floatArray[max].toString())
-                Log.d("modelOutput", "label: " + label[max] )
+                Log.d("modelOutput", "label: " + label[max])
                 Toast.makeText(baseContext, label[max], Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 Log.e("modelOutput", e.toString())
@@ -104,6 +135,22 @@ class Image : AppCompatActivity() {
             }
         }
 //        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun hasLocationPermission()=
+        EasyPermissions.hasPermissions(
+            applicationContext,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+
+    private fun requestLocationPermission(){
+        EasyPermissions.requestPermissions(
+            this,
+            "We need you location to give you nearby clinic",
+            PERMISSION_LOCATION_REQUEST_CODE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
     }
 
     fun getMax(arr: FloatArray): Int {
@@ -117,6 +164,24 @@ class Image : AppCompatActivity() {
             }
         }
         return ind
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        Log.d("location_granted", requestCode.toString())
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        requestLocationPermission()
+        Log.e("location_denied", requestCode.toString())
     }
 
 //    private fun convertImageViewToBitmap(v: ImageView): Bitmap? {
