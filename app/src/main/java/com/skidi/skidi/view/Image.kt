@@ -23,12 +23,17 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.location.*
 import com.skidi.skidi.databinding.ActivityImageBinding
 import com.skidi.skidi.ml.Model
+import com.skidi.skidi.model.BackendResponse
+import com.skidi.skidi.model.BackendRetrofit
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import pub.devrel.easypermissions.EasyPermissions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -43,6 +48,7 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var longitude = 0.0
     private var latitude = 0.0
+    private var symptoms_name = ""
 
 
     companion object {
@@ -63,8 +69,10 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         if(hasLocationPermission()){
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                longitude = it.longitude
-                latitude = it.latitude
+                if(it !== null){
+                    longitude = it.longitude
+                    latitude = it.latitude
+                }
                 Log.d("location", "$longitude $latitude")
             }
             fusedLocationProviderClient.lastLocation.addOnFailureListener {
@@ -128,6 +136,8 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 Log.d("modelOutput", outputFeature0.floatArray[max].toString())
                 Log.d("modelOutput", "label: " + label[max])
                 Toast.makeText(baseContext, label[max], Toast.LENGTH_LONG).show()
+                symptoms_name = label[max]
+                getApiResponse()
             } catch (e: Exception) {
                 Log.e("modelOutput", e.toString())
                 Log.e("modelB", tensorImage.buffer.toString())
@@ -142,6 +152,26 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             applicationContext,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+
+    private fun getApiResponse(){
+        BackendRetrofit.instance
+            .apiGetInformation(symptoms_name, latitude, longitude)
+            .enqueue(object : Callback<BackendResponse> {
+                override fun onFailure(call: Call<BackendResponse>, t: Throwable) {
+                    Log.d("ApiBackend", t.message.toString())
+                }
+
+                override fun onResponse(
+                    call: Call<BackendResponse>,
+                    response: Response<BackendResponse>
+                ) {
+                    if(response.isSuccessful) {
+                        Log.d("response", response.body().toString())
+                    }
+                }
+
+            })
+    }
 
 
     private fun requestLocationPermission(){
