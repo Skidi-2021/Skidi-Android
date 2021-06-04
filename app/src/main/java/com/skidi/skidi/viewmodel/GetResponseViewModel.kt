@@ -11,10 +11,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import kotlin.collections.ArrayList
 
 class GetResponseViewModel : ViewModel() {
-    private val _chatEntity = MutableLiveData<ChatEntity>()
-    val chatEntity : LiveData<ChatEntity> = _chatEntity
+    private val _chatEntity = MutableLiveData<List<ChatEntity>>()
+    val chatEntity: LiveData<List<ChatEntity>> = _chatEntity
 
 
     fun postSymptom(symptom_name: String, latitude: Double, longitude: Double) {
@@ -26,22 +27,85 @@ class GetResponseViewModel : ViewModel() {
                     response: Response<BackendResponse>
                 ) {
                     if (response.isSuccessful) {
-                        val chat = ChatEntity(
-                            id = 0,
-                            sender = "bot",
-                            message = """
+                        val chatList = ArrayList<ChatEntity>()
+                        chatList.add(
+                            ChatEntity(
+                                id = 0,
+                                sender = "bot",
+                                message = """
                                 Hai. From image that you send, you got ${response.body()?.data?.attributes?.symptomName}
-                                
+                            """.trimIndent(),
+                                type = "chat",
+                                time = Calendar.getInstance().time.toString(),
+                                img = null,
+                                link = null
+                            )
+                        )
+                        chatList.add(
+                            ChatEntity(
+                                id = 0,
+                                sender = "bot",
+                                message = """
                                 Here's some first treatment that you can try:
-                                ${response.body()?.data?.attributes?.sources?.get(0)?.title }
-                                
+                            """.trimIndent(),
+                                type = "chat",
+                                time = Calendar.getInstance().time.toString(),
+                                img = null,
+                                link = null
+                            )
+                        )
+
+                        chatList.add(
+                            ChatEntity(
+                                id = 0,
+                                sender = "bot",
+                                message = """
+                                ${response.body()?.data?.attributes?.sources?.get(0)?.title}
+
                                 ${response.body()?.data?.attributes?.sources?.get(0)?.url}
                             """.trimIndent(),
-                            type = "chat",
-                            time = Calendar.getInstance().time.toString(),
-                            img = null
+                                type = "chat",
+                                time = Calendar.getInstance().time.toString(),
+                                img = null,
+                                link = response.body()?.data?.attributes?.sources?.get(0)?.url
+                            )
                         )
-                        _chatEntity.value = chat
+
+                        chatList.add(
+                            ChatEntity(
+                                id = 0,
+                                sender = "bot",
+                                message = """
+                                ${response.body()?.data?.attributes?.sources?.get(1)?.title}
+                                
+                                ${response.body()?.data?.attributes?.sources?.get(1)?.url}
+                            """.trimIndent(),
+                                type = "chat",
+                                time = Calendar.getInstance().time.toString(),
+                                img = null,
+                                link = response.body()?.data?.attributes?.sources?.get(1)?.url
+                            )
+                        )
+
+//                        chatList.add(
+//                            ChatEntity(
+//                                id = 0,
+//                                sender = "bot",
+//                                message = """
+//                                According to your location, here's the hospital that have skin specialist that can help you.
+//
+//                                ${response.body()?.included?.get(0)?.attributes?.get(0)?.name}
+//
+//                                ${response.body()?.included?.get(0)?.attributes?.get(0)?.mapsUrl}
+//                            """.trimIndent(),
+//                                type = "chat",
+//                                time = Calendar.getInstance().time.toString(),
+//                                img = null,
+//                                link = response.body()?.included?.get(0)?.attributes?.get(0)?.mapsUrl
+//                            )
+//                        )
+
+                        _chatEntity.value = chatList
                     }
                 }
 

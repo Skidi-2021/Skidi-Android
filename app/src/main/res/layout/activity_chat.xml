@@ -19,6 +19,7 @@
 
     <EditText
         android:id="@+id/chatMessage"
+        android:padding="8dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="45dp"

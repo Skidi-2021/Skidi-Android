@@ -1,7 +1,7 @@
 package com.skidi.skidi.view
 
 import android.content.Context
-import android.os.Message
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +11,7 @@ import com.skidi.skidi.R
 import com.skidi.skidi.databinding.BotMessageBinding
 import com.skidi.skidi.databinding.UserMessageBinding
 import com.skidi.skidi.model.ChatEntity
+import java.util.regex.Pattern
 
 private const val VIEW_TYPE_USER_MESSAGE = 1
 private const val VIEW_TYPE_BOT_MESSAGE = 2
@@ -25,11 +26,11 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
         open fun bind(message: ChatEntity) {}
     }
 
-    fun setMessage(message: ChatEntity) {
+    fun setMessage(message: List<ChatEntity>) {
         //Change to "message: ChatEntity" later
-        if (message == null) return
+//        if (message == null) return
 //        this.chat.clear()
-        this.chat.add(message)
+        this.chat.addAll(message)
         notifyDataSetChanged()
     }
 
@@ -52,6 +53,9 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
             super.bind(message)
             binding.tvBotMessage.text = message.message
             binding.tvTime.text = message.time
+            val wikiWordMatcher: Pattern = Pattern.compile("\\b[A-Z]+[a-z0-9]+[A-Z][A-Za-z0-9]+\\b")
+            val wikiViewURL = message.link
+            Linkify.addLinks(binding.tvBotMessage, wikiWordMatcher, wikiViewURL)
         }
     }
 

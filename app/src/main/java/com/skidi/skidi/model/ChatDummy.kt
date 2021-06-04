@@ -11,6 +11,7 @@ object ChatDummy {
                 "Hi, can I help you?",
                 "Chat",
                 "18.50",
+                "",
                 ""
             )
         )
@@ -22,6 +23,7 @@ object ChatDummy {
                 "I have a skin problem",
                 "Chat",
                 "18.51",
+                "",
                 ""
             )
         )
@@ -33,6 +35,7 @@ object ChatDummy {
                 "What's symtomps that you have?",
                 "Chat",
                 "18.52",
+                "",
                 ""
             )
         )
@@ -44,6 +47,7 @@ object ChatDummy {
                 "I have red spotting on my hand",
                 "Chat",
                 "18.53",
+                "",
                 ""
             )
         )

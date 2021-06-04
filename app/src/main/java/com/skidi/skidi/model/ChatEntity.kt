@@ -6,5 +6,6 @@ data class ChatEntity(
         var message: String?,
         var type: String,
         var time: String,
-        var img: String?
+        var img: String?,
+        var link: String?
 )

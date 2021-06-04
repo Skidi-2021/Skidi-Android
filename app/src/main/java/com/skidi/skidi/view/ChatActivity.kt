@@ -45,8 +45,8 @@ class ChatActivity : AppCompatActivity() {
 
 
         viewModel.chatEntity.observe(this@ChatActivity, {
-            Log.d("symptom", it.message.toString())
-            Log.d("symptom", "get response is running!")
+//            Log.d("symptom", it.message.toString())
+//            Log.d("symptom", "get response is running!")
             adapter.setMessage(it)
             binding.apply {
                 rvChat.layoutManager = LinearLayoutManager(this@ChatActivity)
