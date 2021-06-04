@@ -3,6 +3,7 @@ package com.skidi.skidi.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -21,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationServices
 import com.skidi.skidi.databinding.ActivityImageBinding
 import com.skidi.skidi.ml.Model
 import com.skidi.skidi.model.BackendResponse
@@ -38,6 +40,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
+import kotlin.math.max
 
 
 class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
@@ -67,9 +70,9 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         val skidiModel = Model.newInstance(applicationContext)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        if(hasLocationPermission()){
+        if (hasLocationPermission()) {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                if(it !== null){
+                if (it !== null) {
                     longitude = it.longitude
                     latitude = it.latitude
                 }
@@ -78,7 +81,7 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             fusedLocationProviderClient.lastLocation.addOnFailureListener {
                 Log.e("location", it.toString())
             }
-        } else{
+        } else {
             requestLocationPermission()
         }
 
@@ -138,6 +141,11 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 Toast.makeText(baseContext, label[max], Toast.LENGTH_LONG).show()
                 symptoms_name = label[max]
                 getApiResponse()
+                val intent = Intent(this@Image, ChatActivity::class.java)
+                intent.putExtra("EXTRA_SYMPTOM", label[max])
+                intent.putExtra("EXTRA_LAT", latitude)
+                intent.putExtra("EXTRA_LONG", longitude)
+                startActivity(intent)
             } catch (e: Exception) {
                 Log.e("modelOutput", e.toString())
                 Log.e("modelB", tensorImage.buffer.toString())
@@ -147,13 +155,13 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 //        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
     }
 
-    private fun hasLocationPermission()=
+    private fun hasLocationPermission() =
         EasyPermissions.hasPermissions(
             applicationContext,
             Manifest.permission.ACCESS_FINE_LOCATION
         )
 
-    private fun getApiResponse(){
+    private fun getApiResponse() {
         BackendRetrofit.instance
             .apiGetInformation(symptoms_name, latitude, longitude)
             .enqueue(object : Callback<BackendResponse> {
@@ -165,7 +173,7 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                     call: Call<BackendResponse>,
                     response: Response<BackendResponse>
                 ) {
-                    if(response.isSuccessful) {
+                    if (response.isSuccessful) {
                         Log.d("response", response.body().toString())
                     }
                 }
@@ -174,7 +182,7 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
 
-    private fun requestLocationPermission(){
+    private fun requestLocationPermission() {
         EasyPermissions.requestPermissions(
             this,
             "We need you location to give you nearby clinic",
@@ -213,40 +221,4 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         requestLocationPermission()
         Log.e("location_denied", requestCode.toString())
     }
-
-//    private fun convertImageViewToBitmap(v: ImageView): Bitmap? {
-//        return (v.getDrawable() as BitmapDrawable).bitmap
-//    }
-
-//    private fun toBitmap(imageProxy: ImageProxy): Bitmap? {
-//
-//        val yuvToRgbConverter = YuvToRgbCConverter(applicationContext)
-//
-//        val image = imageProxy.image ?: return null
-//
-//        // Initialise Buffer
-//        if (!::bitmapBuffer.isInitialized) {
-//            // The image rotation and RGB image buffer are initialized only once
-////            Log.d(TAG, "Initalise toBitmap()")
-//            rotationMatrix = Matrix()
-//            rotationMatrix.postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-//            bitmapBuffer = Bitmap.createBitmap(
-//                imageProxy.width, imageProxy.height, Bitmap.Config.ARGB_8888
-//            )
-//        }
-//
-//        // Pass image to an image analyser
-//        yuvToRgbConverter.yuvToRgb(image, bitmapBuffer)
-//
-//        // Create the Bitmap in the correct orientation
-//        return Bitmap.createBitmap(
-//            bitmapBuffer,
-//            0,
-//            0,
-//            bitmapBuffer.width,
-//            bitmapBuffer.height,
-//            rotationMatrix,
-//            false
-//        )
-//    }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.skidi.skidi.R
 import com.skidi.skidi.databinding.BotMessageBinding
 import com.skidi.skidi.databinding.UserMessageBinding
@@ -24,11 +25,11 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
         open fun bind(message: ChatEntity) {}
     }
 
-    fun setMessage(message: List<ChatEntity>) {
+    fun setMessage(message: ChatEntity) {
         //Change to "message: ChatEntity" later
         if (message == null) return
 //        this.chat.clear()
-        this.chat.addAll(message)
+        this.chat.add(message)
         notifyDataSetChanged()
     }
 
@@ -36,7 +37,10 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
         val binding: UserMessageBinding = UserMessageBinding.bind(view)
         override fun bind(message: ChatEntity) {
             super.bind(message)
-            binding.tvUserMessage.text = message.message
+//            binding.tvUserMessage.text = message.message
+            Glide.with(itemView)
+                .load(message.img)
+                .into(binding.imgSymptomPhoto)
             binding.tvTime.text = message.time
         }
     }
