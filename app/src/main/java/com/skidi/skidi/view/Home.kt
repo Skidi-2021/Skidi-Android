@@ -49,7 +49,7 @@ class Home : AppCompatActivity() {
 
         activityHomeBinding.apply {
             btnChat.setOnClickListener {
-                startActivity(Intent(this@Home, ChatActivity::class.java))
+                startActivity(Intent(this@Home, Camera::class.java))
             }
 
             btnCamera.setOnClickListener {
