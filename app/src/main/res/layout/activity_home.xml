@@ -1,23 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="16dp"
+    android:scrollbars="none"
     tools:context=".view.Home">
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="chat"
-        android:id="@+id/btn_chat"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="camera"
-        android:id="@+id/btn_camera"/>
+        <TextView
+            android:id="@+id/tv_top_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="8dp"
+            android:text="Hi, Apa Kabar?"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Ayo kenali bagaimana penanganan pertama untuk masalah penyakit kulitmu"
+            android:textSize="26sp" />
+
+        <Button
+            android:id="@+id/btn_chat"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            android:text="Deteksi Sekarang" />
+
+        <TextView
+            android:id="@+id/tv_top_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Artikel"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_desc_top_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Baca juga artikel menarik berikut yang berguna untuk menambaha wawasan kamu tentang pentingnya merawat kulit"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_news"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none"
+            tools:listitem="@layout/card_news" />
+
+        <Button
+            android:id="@+id/btn_camera"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="camera"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</ScrollView>
