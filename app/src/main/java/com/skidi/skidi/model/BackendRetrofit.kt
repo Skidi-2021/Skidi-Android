@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object BackendRetrofit {
-    private const val API_URL = "http://34.101.207.22/"
+    private const val API_URL = "https://api.skidi.learnwithghaniy.web.id"
 
     val reftrofit = Retrofit.Builder()
         .baseUrl(API_URL)

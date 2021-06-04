@@ -90,24 +90,11 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         val label = inputString.split("\n")
 
         val savedUri = intent.getStringExtra(EXTRA_IMAGE_URL)
-//        Log.d("imageeee", savedUri.toString())
-        val msg = "Photo capture succeeded: $savedUri"
 
         Glide
             .with(this)
             .load(savedUri)
             .into(activityImageBinding.ivImage)
-
-//        val drawable = activityImageBinding.ivImage.drawable
-//        val bitmapDrawable = convertImageViewToBitmap(activityImageBinding.ivImage)
-//        val bitmapDrawable = drawable as BitmapDrawable
-//        val drawableBitmap = bitmapDrawable.bitmap
-//        val stream = ByteArrayOutputStream()
-//        drawableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-//        val imageInByte = stream.toByteArray()
-//        val bis = ByteArrayInputStream(imageInByte)
-
-//        Log.d("sdfsdf", bitmap)
 
         activityImageBinding.btnUpload.setOnClickListener {
             var tensorImage = TensorImage(DataType.UINT8)
@@ -140,19 +127,13 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 Log.d("modelOutput", "label: " + label[max])
                 Toast.makeText(baseContext, label[max], Toast.LENGTH_LONG).show()
                 symptoms_name = label[max]
-                getApiResponse()
-                val intent = Intent(this@Image, ChatActivity::class.java)
-                intent.putExtra("EXTRA_SYMPTOM", label[max])
-                intent.putExtra("EXTRA_LAT", latitude)
-                intent.putExtra("EXTRA_LONG", longitude)
-                startActivity(intent)
+                intentToChat()
             } catch (e: Exception) {
                 Log.e("modelOutput", e.toString())
                 Log.e("modelB", tensorImage.buffer.toString())
                 Log.e("modelBI", inputFeature0.buffer.toString())
             }
         }
-//        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun hasLocationPermission() =
@@ -161,24 +142,12 @@ class Image : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             Manifest.permission.ACCESS_FINE_LOCATION
         )
 
-    private fun getApiResponse() {
-        BackendRetrofit.instance
-            .apiGetInformation(symptoms_name, latitude, longitude)
-            .enqueue(object : Callback<BackendResponse> {
-                override fun onFailure(call: Call<BackendResponse>, t: Throwable) {
-                    Log.d("ApiBackend", t.message.toString())
-                }
-
-                override fun onResponse(
-                    call: Call<BackendResponse>,
-                    response: Response<BackendResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        Log.d("response", response.body().toString())
-                    }
-                }
-
-            })
+    private fun intentToChat() {
+        val intent = Intent(this@Image, ChatActivity::class.java)
+        intent.putExtra(ChatActivity.EXTRA_SYMPTOM, symptoms_name)
+        intent.putExtra(ChatActivity.EXTRA_LAT, latitude)
+        intent.putExtra(ChatActivity.EXTRA_LONG, longitude)
+        startActivity(intent)
     }
 
 
