@@ -61,8 +61,6 @@ class GetResponseViewModel : ViewModel() {
                                 sender = "bot",
                                 message = """
                                 ${response.body()?.data?.attributes?.sources?.get(0)?.title}
-
-                                ${response.body()?.data?.attributes?.sources?.get(0)?.url}
                             """.trimIndent(),
                                 type = "chat",
                                 time = Calendar.getInstance().time.toString(),
@@ -77,8 +75,6 @@ class GetResponseViewModel : ViewModel() {
                                 sender = "bot",
                                 message = """
                                 ${response.body()?.data?.attributes?.sources?.get(1)?.title}
-                                
-                                ${response.body()?.data?.attributes?.sources?.get(1)?.url}
                             """.trimIndent(),
                                 type = "chat",
                                 time = Calendar.getInstance().time.toString(),

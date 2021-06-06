@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.skidi.skidi.databinding.ActivityChatBinding
@@ -43,9 +44,10 @@ class ChatActivity : AppCompatActivity() {
             viewModel.postSymptom(symptom, lat, long)
         }
 
-
+        showLoading(true)
 
         viewModel.chatEntity.observe(this@ChatActivity, {
+            showLoading(false)
 //            Log.d("symptom", it.message.toString())
 //            Log.d("symptom", "get response is running!")
             adapter.setMessage(it)
@@ -61,6 +63,14 @@ class ChatActivity : AppCompatActivity() {
             val intent = Intent(this, Home::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
+        }
+    }
+
+    private fun showLoading(state: Boolean) {
+        if (state) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

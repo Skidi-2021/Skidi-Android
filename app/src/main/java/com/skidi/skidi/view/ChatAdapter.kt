@@ -1,10 +1,13 @@
 package com.skidi.skidi.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.skidi.skidi.R
@@ -53,9 +56,21 @@ class ChatAdapter(val context: Context) : RecyclerView.Adapter<ChatAdapter.ChatV
             super.bind(message)
             binding.tvBotMessage.text = message.message
             binding.tvTime.text = message.time
-            val wikiWordMatcher: Pattern = Pattern.compile("\\b[A-Z]+[a-z0-9]+[A-Z][A-Za-z0-9]+\\b")
-            val wikiViewURL = message.link
-            Linkify.addLinks(binding.tvBotMessage, wikiWordMatcher, wikiViewURL)
+//            val wikiWordMatcher: Pattern = Pattern.compile("\\b[A-Z]+[a-z0-9]+[A-Z][A-Za-z0-9]+\\b")
+//            val wikiViewURL = message.link
+//            Linkify.addLinks(binding.tvBotMessage, wikiWordMatcher, wikiViewURL)
+
+            if (message.link != null) {
+                binding.btnLink.visibility = View.VISIBLE
+                binding.btnLink.setOnClickListener {
+                    val openURL = Intent(Intent.ACTION_VIEW)
+                    openURL.data = Uri.parse(message.link)
+//                    startActivity(ChatActivity,openURL)
+                    context.startActivity(openURL)
+                }
+            } else {
+                binding.btnLink.visibility = View.GONE
+            }
         }
     }
 
