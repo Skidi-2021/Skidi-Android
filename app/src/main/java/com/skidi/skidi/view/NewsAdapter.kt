@@ -4,6 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.skidi.skidi.databinding.CardNewsBinding
 import com.skidi.skidi.model.ArticlesItem
 import com.skidi.skidi.model.NewsResponse
@@ -20,11 +23,22 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewModel>() {
         notifyDataSetChanged()
     }
 
+    private var onItemClickCallback: OnItemClickCallback? = null
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClickCallback(data: ArticlesItem) {}
+    }
+
     class NewsViewModel(val binding: CardNewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ArticlesItem) {
             binding.apply {
                 Glide.with(itemView)
                     .load(data.urlToImage)
+                    .apply(RequestOptions().transform(CenterCrop(), RoundedCorners(20)))
                     .into(ivImage)
                 tvDate.text =
                     SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(data.publishedAt)
@@ -42,6 +56,8 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewModel>() {
 
     override fun onBindViewHolder(holder: NewsAdapter.NewsViewModel, position: Int) {
         holder.bind(newsList[position])
+
+        holder.itemView.setOnClickListener { onItemClickCallback?.onItemClickCallback(newsList[holder.absoluteAdapterPosition]) }
     }
 
     override fun getItemCount(): Int = newsList.size

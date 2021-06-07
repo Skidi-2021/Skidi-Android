@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/read_news"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.ReadNewsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/btn_back"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_arrow_back"/>
+
+        <ImageView
+            android:id="@+id/iv_image_main"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/bg_image"
+            android:scaleType="center"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_back"/>
+
+        <TextView
+            android:id="@+id/tv_date_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="hhmmyyyy"
+            android:textSize="10sp"
+            app:layout_constraintTop_toBottomOf="@id/iv_image_main" />
+
+        <TextView
+            android:id="@+id/tv_title_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Artikel Titel"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tv_date_main" />
+
+        <TextView
+            android:id="@+id/tv_content_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/lorem"
+            app:layout_constraintTop_toBottomOf="@id/tv_title_main" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_read_more"
+            android:layout_margin="16dp"
+            android:padding="16dp"
+            android:text="Baca Selengkapnya"
+            app:layout_constraintTop_toBottomOf="@id/tv_content_main"/>
+
+        <TextView
+            android:id="@+id/tv_top_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Artikel Lainnya"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/btn_read_more"/>
+
+        <TextView
+            android:id="@+id/tv_desc_top_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Baca juga artikel menarik berikut yang berguna untuk menambaha wawasan kamu tentang pentingnya merawat kulit"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_top_article"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_news"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none"
+            tools:listitem="@layout/card_news"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc_top_article"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
