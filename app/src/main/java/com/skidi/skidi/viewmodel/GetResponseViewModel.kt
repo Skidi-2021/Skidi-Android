@@ -83,23 +83,21 @@ class GetResponseViewModel : ViewModel() {
                             )
                         )
 
-//                        chatList.add(
-//                            ChatEntity(
-//                                id = 0,
-//                                sender = "bot",
-//                                message = """
-//                                According to your location, here's the hospital that have skin specialist that can help you.
-//
-//                                ${response.body()?.included?.get(0)?.attributes?.get(0)?.name}
-//
-//                                ${response.body()?.included?.get(0)?.attributes?.get(0)?.mapsUrl}
-//                            """.trimIndent(),
-//                                type = "chat",
-//                                time = Calendar.getInstance().time.toString(),
-//                                img = null,
-//                                link = response.body()?.included?.get(0)?.attributes?.get(0)?.mapsUrl
-//                            )
-//                        )
+                        chatList.add(
+                            ChatEntity(
+                                id = 0,
+                                sender = "bot",
+                                message = """
+                                According to your location, here's the hospital that have skin specialist that can help you.
+
+                                ${response.body()?.included?.get(0)?.attributes?.get(0)?.name}
+                            """.trimIndent(),
+                                type = "chat",
+                                time = Calendar.getInstance().time.toString(),
+                                img = null,
+                                link = response.body()?.included?.get(0)?.attributes?.get(0)?.mapsUrl
+                            )
+                        )
 
                         _chatEntity.value = chatList
                     }
